@@ -24,6 +24,12 @@ class PlanController {
 
     return res.json(plans);
   }
+
+  async index(req, res) {
+    const plans = await Plan.findAll();
+
+    return res.json(plans);
+  }
 }
 
 export default new PlanController();
