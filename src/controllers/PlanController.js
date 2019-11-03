@@ -1,24 +1,12 @@
-import * as Yup from 'yup';
-
 import Plan from '../models/Plan';
 
 class PlanController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      title: Yup.string().required(),
-      duration: Yup.number()
-        .positive()
-        .required(),
-      price: Yup.number()
-        .positive()
-        .required(),
-    });
+    const schema = Plan.validateSchema();
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-
-    const { title, duration, price } = req.body;
 
     const plans = await Plan.create(req.body);
 
@@ -29,6 +17,26 @@ class PlanController {
     const plans = await Plan.findAll();
 
     return res.json(plans);
+  }
+
+  async update(req, res) {
+    const schema = Plan.validateSchema();
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    const { id } = req.params;
+
+    const validatePlan = await Plan.findByPk(id);
+
+    if (!validatePlan) {
+      return res.status(400).json({ error: 'Plan does not exists.' });
+    }
+
+    const plan = await validatePlan.update(req.body);
+
+    return res.json(plan);
   }
 }
 
