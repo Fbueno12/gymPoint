@@ -3,6 +3,7 @@ import { parseISO, isBefore, startOfDay, addMonths } from 'date-fns';
 import Student from '../models/Student';
 import Plan from '../models/Plan';
 import Registration from '../models/Registration';
+import Mail from '../lib/Mail';
 
 class RegistrationController {
   async index(req, res) {
@@ -50,14 +51,18 @@ class RegistrationController {
 
     const price = checkPlan.price * checkPlan.duration;
 
-    // antes de efetuar o registo, fazer o envio de email para o aluno
-
     const registration = await Registration.create({
       student_id,
       plan_id,
       start_date,
       end_date,
       price,
+    });
+
+    await Mail.sendMail({
+      to: `${checkStudent.name} <${checkStudent.email}>`,
+      subject: `Seja bem vindo ao GymPoint ${checkStudent.name}`,
+      text: 'Sua matricula foi registrada com sucesso!',
     });
 
     return res.json(registration);
