@@ -62,6 +62,22 @@ class RegistrationController {
 
     return res.json(registration);
   }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const registration = await Registration.findByPk(id);
+
+    if (!registration) {
+      return res.status(400).json({
+        error: 'Registration does not exists.',
+      });
+    }
+
+    registration.destroy();
+
+    return res.status(204).json();
+  }
 }
 
 export default new RegistrationController();
