@@ -38,6 +38,28 @@ class PlanController {
 
     return res.json(plan);
   }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const plan = await Plan.findByPk(id);
+
+    if (!plan) {
+      return res.status(400).json({
+        error: 'Plan does not exists.',
+      });
+    }
+
+    const deleted = plan.destroy();
+
+    if (!deleted.isRejected) {
+      return res.status(500).json({
+        error: 'Your deletion was rejected.',
+      });
+    }
+
+    return res.json({ message: 'Your deletion was performed succesfully.' });
+  }
 }
 
 export default new PlanController();
