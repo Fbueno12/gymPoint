@@ -31,6 +31,8 @@ routes.post('/registrations/create/:plan_id', RegistrationController.store);
 routes.put('/registrations/update/:id', RegistrationController.update);
 routes.delete('/registrations/delete/:id', RegistrationController.delete);
 
-routes.post('/help_orders', HelpOrderController.store);
+routes.get('/students/help-orders', HelpOrderController.index);
+routes.get('/students/:student_id/help-orders', HelpOrderController.show);
+routes.put('/help-orders/:order_id/answer', HelpOrderController.update);
 
 export default routes;
