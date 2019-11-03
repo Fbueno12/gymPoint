@@ -6,7 +6,7 @@ export default {
     user: '580f4db3556d47',
     pass: 'ee521a89418700',
   },
-  defaul: {
+  default: {
     from: 'Equipe gymPoint <noreply@gympoint.com.br>',
   },
 };

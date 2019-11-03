@@ -1,4 +1,5 @@
-import { parseISO, isBefore, startOfDay, addMonths } from 'date-fns';
+import { parseISO, isBefore, startOfDay, addMonths, format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 
 import Student from '../models/Student';
 import Plan from '../models/Plan';
@@ -59,10 +60,18 @@ class RegistrationController {
       price,
     });
 
-    await Mail.sendMail({
+    Mail.sendMail({
       to: `${checkStudent.name} <${checkStudent.email}>`,
       subject: `Seja bem vindo ao GymPoint ${checkStudent.name}`,
-      text: 'Sua matricula foi registrada com sucesso!',
+      template: 'registration',
+      context: {
+        student_name: checkStudent.name,
+        plan_name: checkPlan.title,
+        plan_end_date: format(registration.end_date, "dd 'de' MMMM 'de' yyyy", {
+          locale: pt,
+        }),
+        plan_price: checkPlan.price,
+      },
     });
 
     return res.json(registration);

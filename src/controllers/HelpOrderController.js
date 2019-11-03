@@ -1,5 +1,8 @@
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import Student from '../models/Student';
 import HelpOrder from '../models/HelpOrder';
+import Mail from '../lib/Mail';
 
 class HelpOrderController {
   async store(req, res) {
@@ -28,7 +31,7 @@ class HelpOrderController {
       },
     });
 
-    if (orders.length >= 0) {
+    if (orders.length <= 0) {
       return res.status(204).json();
     }
 
@@ -56,7 +59,15 @@ class HelpOrderController {
   async update(req, res) {
     const { order_id } = req.params;
 
-    const order = await HelpOrder.findByPk(order_id);
+    const order = await HelpOrder.findByPk(order_id, {
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
 
     if (!order) {
       return res.status(400).json({ error: 'Help order does not exists.' });
@@ -68,6 +79,20 @@ class HelpOrderController {
     order.answered_at = new Date();
 
     await order.save();
+
+    Mail.sendMail({
+      to: `${order.student.name} <${order.student.email}>`,
+      subject: `Sua pergunta foi respondia pela equipe do GymPoint!`,
+      template: 'help_orders',
+      context: {
+        student_name: order.student.name,
+        question_date: format(order.createdAt, "dd 'de' MMMM 'de' yyyy", {
+          locale: pt,
+        }),
+        question: order.question,
+        answer: order.answer,
+      },
+    });
 
     return res.json(order);
   }

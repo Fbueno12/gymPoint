@@ -1,5 +1,4 @@
 import Sequelize, { Model } from 'sequelize';
-import * as Yup from 'yup';
 
 class HelpOrder extends Model {
   static init(sequelize) {
@@ -14,19 +13,14 @@ class HelpOrder extends Model {
         sequelize,
       }
     );
-
     return this;
   }
 
   static associate(models) {
-    this.belongsTo(models.Student, { foreignKey: 'student_id', as: 'student' });
-  }
-
-  static validateSchema() {
-    const schema = Yup.object().shape({
-      question: Yup.string().required(),
+    this.belongsTo(models.Student, {
+      foreignKey: 'student_id',
+      as: 'student',
     });
-    return schema;
   }
 }
 
