@@ -15,13 +15,14 @@ routes.use(auth);
 routes.post('/students/create', StudentsController.store);
 routes.put('/students/update/:id', StudentsController.update);
 
-routes.post('/plans/create', PlanController.store);
 routes.get('/plans/list', PlanController.index);
+routes.post('/plans/create', PlanController.store);
 routes.put('/plans/update/:id', PlanController.update);
 routes.delete('/plans/delete/:id', PlanController.delete);
 
-routes.post('/registrations/create/:plan_id', RegistrationController.store);
 routes.get('/registrations/list', RegistrationController.index);
+routes.post('/registrations/create/:plan_id', RegistrationController.store);
+routes.put('/registrations/update/:id', RegistrationController.update);
 routes.delete('/registrations/delete/:id', RegistrationController.delete);
 
 export default routes;

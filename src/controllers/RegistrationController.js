@@ -63,6 +63,56 @@ class RegistrationController {
     return res.json(registration);
   }
 
+  async update(req, res) {
+    const { id } = req.params;
+    const { student_id } = req.headers;
+
+    const checkStudent = await Student.findByPk(student_id);
+
+    if (!checkStudent) {
+      return res.status(400).json({
+        error: 'Student does not exists.',
+      });
+    }
+
+    const registration = await Registration.findByPk(id, {
+      where: { student_id },
+    });
+
+    if (!registration) {
+      return res.status(400).json({
+        error: 'Registration does not exists.',
+      });
+    }
+
+    const { plan_id, date } = req.body;
+
+    const plan = await Plan.findByPk(plan_id);
+
+    if (!plan) {
+      return res.status(400).json({ error: 'Plan does not Exists' });
+    }
+
+    const start_date = startOfDay(parseISO(date));
+
+    if (isBefore(start_date, new Date())) {
+      return res.status(400).json({ error: 'Past dates are not permitted.' });
+    }
+
+    const end_date = addMonths(start_date, plan.duration);
+
+    const price = plan.price * plan.duration;
+
+    await registration.update({
+      plan_id,
+      start_date,
+      end_date,
+      price,
+    });
+
+    return res.json(registration);
+  }
+
   async delete(req, res) {
     const { id } = req.params;
 
